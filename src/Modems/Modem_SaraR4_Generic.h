@@ -143,12 +143,14 @@ class ModemClass
   public:
 
 
-    ModemClass(Uart& uart, unsigned long baud, int resetPin = -1, int powerOnPin = -1, int vIntPin = SARA_VINT) :
+    ModemClass(Uart& uart, unsigned long baud, int resetPin = -1, int powerOnPin = -1, int vIntPin = SARA_VINT, int modemRXPin = -1, int modemTXPin = -1) :
       _uart(&uart),
       _baud(baud),
       _resetPin(resetPin),
       _powerOnPin(powerOnPin),
       _vIntPin(vIntPin),
+      _modemRXPin(modemRXPin),
+      _modemTXPin(modemTXPin),
       _lastResponseOrUrcMillis(0),
       _atCommandState(AT_COMMAND_IDLE),
       _ready(1),
@@ -206,8 +208,10 @@ class ModemClass
       }
 
       NB_LOGDEBUG1(F("begin: UART baud = "), _baud);
-
-      _uart->begin(_baud > 115200 ? 115200 : _baud);
+      if(_modemRXPin != -1 || _modemTXPin != -1)
+        _uart->begin(_baud > 115200 ? 115200 : _baud,SERIAL_8N1,_modemRXPin,_modemTXPin);
+      else
+        _uart->begin(_baud > 115200 ? 115200 : _baud);
 
 #if UBLOX_USING_POWER_ON_PIN
       // power on module
@@ -258,7 +262,10 @@ class ModemClass
 
         _uart->end();
         delay(100);
-        _uart->begin(_baud);
+        if(_modemRXPin != -1 || _modemTXPin != -1)
+          _uart->begin(_baud > 115200 ? 115200 : _baud,SERIAL_8N1,_modemRXPin,_modemTXPin);
+        else
+          _uart->begin(_baud > 115200 ? 115200 : _baud);
 
         if (!autosense())
         {
@@ -2069,6 +2076,8 @@ class ModemClass
     int _resetPin;
     int _powerOnPin;
     int _vIntPin;
+    int _modemRXPin;
+    int _modemTXPin;
     unsigned long _lastResponseOrUrcMillis;
 
     enum
@@ -2089,7 +2098,9 @@ class ModemClass
 
 //////////////////////////////////////////////////////
 
-#if (UBLOX_USING_POWER_ON_PIN && UBLOX_USING_RESET_PIN)
+#if (UBLOX_USING_POWER_ON_PIN && UBLOX_USING_RESET_PIN && UBLOX_USING_UART_CUSTOM_PIN)
+  ModemClass MODEM(SerialNB, 115200, NB_RESETN, NB_PWR, SARA_VINT, NB_RX_PIN, NB_TX_PIN);
+#elif (UBLOX_USING_POWER_ON_PIN && UBLOX_USING_RESET_PIN)
   ModemClass MODEM(SerialNB, 115200, NB_RESETN, NB_PWR, SARA_VINT);
 #elif UBLOX_USING_POWER_ON_PIN
   ModemClass MODEM(SerialNB, 115200, -1, NB_PWR, SARA_VINT);
