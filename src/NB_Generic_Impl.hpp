@@ -163,10 +163,10 @@ NB_NetworkStatus_t NB::begin(unsigned long baud, const char* pin, const char* ap
         delay(100);
       }
     }
-    else
-    {
-      return (NB_NetworkStatus_t) 0;
-    }
+    // else
+    // {
+    //   return (NB_NetworkStatus_t) 0;
+    // }
   }
 
   return _nbData._state;
