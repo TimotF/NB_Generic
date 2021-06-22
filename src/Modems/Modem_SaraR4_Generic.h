@@ -1673,7 +1673,6 @@ class ModemClass
     String getSignalStrength()
     {
       String response;
-
       send("AT+CSQ");
 
       if (waitForResponse(100, &response) == NB_RESPONSE_OK)
@@ -1683,7 +1682,19 @@ class ModemClass
 
         if ( (firstSpaceIndex != SUBSTRING_NOT_FOUND) && (lastCommaIndex != SUBSTRING_NOT_FOUND) )
         {
-          return response.substring(firstSpaceIndex + 1, lastCommaIndex);
+          int rssi = response.substring(firstSpaceIndex + 1, lastCommaIndex).toInt();
+          String ret = "";
+          if(rssi == 0){
+            ret += "<113 dBm";
+          } else if (rssi == 99){
+            ret += "not detectable";
+          } else{
+            rssi = 2*rssi-113;
+            ret += rssi;
+            ret += " dBm";
+          }
+
+          return ret;
         }
       }
 
