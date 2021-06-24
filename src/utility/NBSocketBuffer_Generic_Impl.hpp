@@ -52,6 +52,8 @@ NBSocketBufferClass::~NBSocketBufferClass()
 
 void NBSocketBufferClass::close(int socket)
 {
+  Serial.printf("!!! Closing socket %d",socket);
+  if(socket < 0) return;
   if (_buffers[socket].data) 
   {
     free(_buffers[socket].data);

@@ -82,9 +82,16 @@ NB_NetworkStatus_t GPRS::detachGPRS(bool synchronous)
 
   if (synchronous)
   {
+    unsigned long start = millis();
     while (ready() == NB_RESPONSE_IDLE)
     {
       delay(100);
+      if (_timeout && !((millis() - start) < _timeout))
+      {
+        _state = NB_ERROR;
+
+        break;
+      }
     }
   }
   else

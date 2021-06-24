@@ -206,13 +206,14 @@ class ModemClass
         _baud = ( baud > 115200 ? 115200 : baud );
         newBaud = true;
       }
-
+      delay(100);
       NB_LOGDEBUG1(F("begin: UART baud = "), _baud);
       if(_modemRXPin != -1 || _modemTXPin != -1)
         _uart->begin(_baud > 115200 ? 115200 : _baud,SERIAL_8N1,_modemRXPin,_modemTXPin);
       else
         _uart->begin(_baud > 115200 ? 115200 : _baud);
 
+      NB_LOGDEBUG1(F("begin: UBLOX using PWR ON pin = "), UBLOX_USING_POWER_ON_PIN);
 #if UBLOX_USING_POWER_ON_PIN
       // power on module
       if (isPowerOn() == NB_MODEM_START_ERROR)

@@ -109,7 +109,14 @@ int NBClient::connect()
 
   if (_synch)
   {
-    while (ready() == NB_RESPONSE_IDLE);
+    uint32_t startTime = millis();
+    while (ready() == NB_RESPONSE_IDLE){
+      if(millis() - startTime > 10000){
+        NB_LOGDEBUG(F("NBClient::connect: Failed to reconnect 1"));
+        return 0;
+      }
+      delay(10);
+    }
   }
   else if (ready() == NB_RESPONSE_IDLE)
   {
@@ -120,9 +127,13 @@ int NBClient::connect()
 
   if (_synch)
   {
-    while (ready() == NB_RESPONSE_IDLE)
-    {
-      delay(100);
+    uint32_t startTime = millis();
+    while (ready() == NB_RESPONSE_IDLE){
+      if(millis() - startTime > 10000){
+        NB_LOGDEBUG(F("NBClient::connect: Failed to reconnect 2"));
+        return 0;
+      }
+      delay(10);
     }
 
     if (_socket == -1)
@@ -226,7 +237,14 @@ int NBClient::available()
 {
   if (_synch)
   {
-    while (ready() == NB_RESPONSE_IDLE);
+    uint32_t startTime = millis();
+    while (ready() == NB_RESPONSE_IDLE){
+      if(millis() - startTime > 10000){
+        NB_LOGDEBUG(F("NBClient::available: Failed to fetch response"));
+        return 0;
+      }
+      delay(10);
+    }
   }
   else if (ready() == NB_RESPONSE_IDLE)
   {
