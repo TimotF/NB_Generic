@@ -208,10 +208,12 @@ class ModemClass
       }
       delay(100);
       NB_LOGDEBUG1(F("begin: UART baud = "), _baud);
-      if(_modemRXPin != -1 || _modemTXPin != -1)
-        _uart->begin(_baud > 115200 ? 115200 : _baud,SERIAL_8N1,_modemRXPin,_modemTXPin);
-      else
-        _uart->begin(_baud > 115200 ? 115200 : _baud);
+      // if(!*_uart){
+      //   if(_modemRXPin != -1 || _modemTXPin != -1)
+      //     _uart->begin(_baud > 115200 ? 115200 : _baud,SERIAL_8N1,_modemRXPin,_modemTXPin);
+      //   else
+      //     _uart->begin(_baud > 115200 ? 115200 : _baud);
+      // }
 
       NB_LOGDEBUG1(F("begin: UBLOX using PWR ON pin = "), UBLOX_USING_POWER_ON_PIN);
 #if UBLOX_USING_POWER_ON_PIN
@@ -246,34 +248,34 @@ class ModemClass
         return NB_MODEM_START_ERROR;
       }
 
-      NB_LOGDEBUG(F("begin: Check baud"));
+      // NB_LOGDEBUG(F("begin: Check baud"));
 
-      // KH, must always set baud here
-      if ( restart || newBaud )
-      {
-        NB_LOGDEBUG1(F("begin: Set baud = "), _baud);
+      // // KH, must always set baud here
+      // if ( restart || newBaud )
+      // {
+      //   NB_LOGDEBUG1(F("begin: Set baud = "), _baud);
 
-        sendf("AT+IPR=%ld", _baud);
+      //   sendf("AT+IPR=%ld", _baud);
 
-        if (waitForResponse() != NB_RESPONSE_OK)
-        {
-          NB_LOGDEBUG(F("begin: Set baud error"));
-          return NB_MODEM_START_ERROR;
-        }
+      //   if (waitForResponse() != NB_RESPONSE_OK)
+      //   {
+      //     NB_LOGDEBUG(F("begin: Set baud error"));
+      //     return NB_MODEM_START_ERROR;
+      //   }
 
-        _uart->end();
-        delay(100);
-        if(_modemRXPin != -1 || _modemTXPin != -1)
-          _uart->begin(_baud > 115200 ? 115200 : _baud,SERIAL_8N1,_modemRXPin,_modemTXPin);
-        else
-          _uart->begin(_baud > 115200 ? 115200 : _baud);
+      //   _uart->end();
+      //   delay(100);
+      //   if(_modemRXPin != -1 || _modemTXPin != -1)
+      //     _uart->begin(_baud > 115200 ? 115200 : _baud,SERIAL_8N1,_modemRXPin,_modemTXPin);
+      //   else
+      //     _uart->begin(_baud > 115200 ? 115200 : _baud);
 
-        if (!autosense())
-        {
-          NB_LOGDEBUG(F("begin: Set baud autosense error"));
-          return NB_MODEM_START_ERROR;
-        }
-      }
+      //   if (!autosense())
+      //   {
+      //     NB_LOGDEBUG(F("begin: Set baud autosense error"));
+      //     return NB_MODEM_START_ERROR;
+      //   }
+      // }
 
       return NB_MODEM_START_OK;
     }
@@ -311,7 +313,7 @@ class ModemClass
 
     void end()
     {
-      _uart->end();
+      // _uart->end();
 
       // Hardware pin power off
       if (isPowerOn() != NB_MODEM_START_ERROR)
